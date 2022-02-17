@@ -1,0 +1,5 @@
+2021/08/15 14:37:41 Micro started
+2021/08/15 14:37:49 editorconfig log: Running on file /home/tb/.config/fish/config.fish
+2021/08/15 14:37:49 editorconfig log: editorconfig core output: 
+
+2021/08/15 14:37:49 editorconfig log: Done.
