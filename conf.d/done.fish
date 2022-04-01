@@ -26,7 +26,7 @@ end
 
 set -g __done_version 1.16.5
 
-function __done_run_powershell_script
+function __done_run_powershell_script_old
     set -l powershell_exe (command --search "powershell.exe")
 
     if test $status -ne 0
@@ -44,7 +44,42 @@ function __done_run_powershell_script
     end
 end
 
+function __done_run_powershell_script
+    set -l timestamp (printf "%s" (date --iso-8601=seconds))
+    set -l powershell_exe (command --search "pwsh.exe")
+
+    if test $status -ne 0
+        and command --search wslvar
+
+        set -l powershell_exe (wslpath (wslvar ProgramFiles)/PowerShell/7-preview/pwsh.exe)
+    end
+
+    if string length --quiet "$powershell_exe"
+        and test -x "$powershell_exe"
+
+        # set cmd (string escape $argv)
+        set -l ps1file (printf "/tmp/%s.ps1" (date --iso-8601=seconds))
+        printf "%s" "$argv" > "$ps1file"
+
+        eval "'$powershell_exe' -NoProfile $ps1file"
+    end
+end
+
 function __done_windows_notification -a title -a message
+    __done_run_powershell_script "
+function ShowFishDoneToast {
+    \$_fish_bt = New-BTContentBuilder
+    \$_fish_bt.AddHeader((Get-Date).ToString('yyyy-MM-dd HH:mm:ss'), 'Fish - $title', '') | Out-Null
+    \$_fish_bt.AddText('$message') | Out-Null
+    \$_fish_bt.Show() | Out-Null
+}
+
+Import-Module BurntToast -MinimumVersion 1.0.0 -ErrorAction Stop
+ShowFishDoneToast
+"    
+end
+
+function __done_windows_notification_old -a title -a message
     if test "$__done_notify_sound" -eq 1
         set soundopt "<audio silent=\"false\" src=\"ms-winsoundevent:Notification.Default\" />"
     else

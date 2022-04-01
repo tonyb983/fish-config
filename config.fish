@@ -1,7 +1,7 @@
 set fish_greeting
 set VIRTUAL_ENV_DISABLE_PROMPT "1"
-set -x MANPAGER "sh -c 'col -bx | batcat --theme \"Sublime Snazzy\" -l man -p'"
-set -x BAT_THEME "Sublime Snazzy"
+set -x MANPAGER "sh -c 'col -bx | bat --theme \"Sublime Snazzy\" -l man -p'"
+set -x BAT_THEME "Dracula"
 set -x EDITOR /usr/bin/micro
 
 set -U __done_min_cmd_duration 10000
@@ -89,8 +89,8 @@ end
 fenv source ~/.nix-profile/etc/profile.d/nix.sh
 
 # Aliases
-alias bat='batcat --theme "Sublime Snazzy" --style header --style rules --style snip --style changes --style header'
-alias cat='batcat --theme "Sublime Snazzy" --style header --style rules --style snip --style changes --style header'
+# alias bat='bat --theme "Sublime Snazzy" --style header --style rules --style snip --style changes --style header'
+alias cat='bat --theme Dracula --style header --style rules --style snip --style changes --style header'
 alias gh='gh.exe'
 alias ls='lsd --group-dirs first --icon-theme fancy'
 alias ll='lsd --almost-all -lL --size short --date relative --group-dirs first --icon-theme fancy --blocks "permission,size,date,name"'
