@@ -2,6 +2,8 @@
 
 # Copyright (c) 2016 Francisco Lourenço & Daniel Wehner
 
+# With modifications made by Tony Barbitta
+
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
@@ -26,47 +28,8 @@ end
 
 set -g __done_version 1.16.5
 
-function __done_run_powershell_script_old
-    set -l powershell_exe (command --search "powershell.exe")
-
-    if test $status -ne 0
-        and command --search wslvar
-
-        set -l powershell_exe (wslpath (wslvar windir)/System32/WindowsPowerShell/v1.0/powershell.exe)
-    end
-
-    if string length --quiet "$powershell_exe"
-        and test -x "$powershell_exe"
-
-        set cmd (string escape $argv)
-
-        eval "$powershell_exe -Command $cmd"
-    end
-end
-
-function __done_run_powershell_script
-    set -l timestamp (printf "%s" (date --iso-8601=seconds))
-    set -l powershell_exe (command --search "pwsh.exe")
-
-    if test $status -ne 0
-        and command --search wslvar
-
-        set -l powershell_exe (wslpath (wslvar ProgramFiles)/PowerShell/7-preview/pwsh.exe)
-    end
-
-    if string length --quiet "$powershell_exe"
-        and test -x "$powershell_exe"
-
-        # set cmd (string escape $argv)
-        set -l ps1file (printf "/tmp/%s.ps1" (date --iso-8601=seconds))
-        printf "%s" "$argv" > "$ps1file"
-
-        eval "'$powershell_exe' -NoProfile $ps1file"
-    end
-end
-
 function __done_windows_notification -a title -a message
-    __done_run_powershell_script "
+    pwsh-eval "
 function ShowFishDoneToast {
     \$_fish_bt = New-BTContentBuilder
     \$_fish_bt.AddHeader((Get-Date).ToString('yyyy-MM-dd HH:mm:ss'), 'Fish - $title', '') | Out-Null
@@ -86,7 +49,7 @@ function __done_windows_notification_old -a title -a message
         set soundopt "<audio silent=\"true\" />"
     end
 
-    __done_run_powershell_script "
+    pwsh-eval "
 [Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom.XmlDocument, ContentType = WindowsRuntime] | Out-Null
 [Windows.UI.Notifications.ToastNotification, Windows.UI.Notifications, ContentType = WindowsRuntime] | Out-Null
 
@@ -127,7 +90,7 @@ function __done_get_focused_window_id
         and xprop -grammar >/dev/null 2>&1
         xprop -root 32x '\t$0' _NET_ACTIVE_WINDOW | cut -f 2
     else if uname -a | string match --quiet --ignore-case --regex microsoft
-        __done_run_powershell_script '
+        pwsh-eval '
 Add-Type @"
     using System;
     using System.Runtime.InteropServices;
@@ -327,7 +290,7 @@ function __done_uninstall -e done_uninstall
     functions -e __done_is_screen_window_active
     functions -e __done_is_process_window_focused
     functions -e __done_windows_notification
-    functions -e __done_run_powershell_script
+    functions -e __done_windows_notification_old
     functions -e __done_humanize_duration
 
     # Erase __done variables
