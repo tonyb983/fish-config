@@ -29,7 +29,7 @@ end
 set -g __done_version 1.16.5
 
 function __done_windows_notification -a title -a message
-    pwsh-eval "
+    pseval "
 function ShowFishDoneToast {
     \$_fish_bt = New-BTContentBuilder
     \$_fish_bt.AddHeader((Get-Date).ToString('yyyy-MM-dd HH:mm:ss'), 'Fish - $title', '') | Out-Null
@@ -49,7 +49,7 @@ function __done_windows_notification_old -a title -a message
         set soundopt "<audio silent=\"true\" />"
     end
 
-    pwsh-eval "
+    pseval "
 [Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom.XmlDocument, ContentType = WindowsRuntime] | Out-Null
 [Windows.UI.Notifications.ToastNotification, Windows.UI.Notifications, ContentType = WindowsRuntime] | Out-Null
 
@@ -90,7 +90,7 @@ function __done_get_focused_window_id
         and xprop -grammar >/dev/null 2>&1
         xprop -root 32x '\t$0' _NET_ACTIVE_WINDOW | cut -f 2
     else if uname -a | string match --quiet --ignore-case --regex microsoft
-        pwsh-eval '
+        pseval '
 Add-Type @"
     using System;
     using System.Runtime.InteropServices;

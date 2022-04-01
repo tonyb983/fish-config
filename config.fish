@@ -2,7 +2,7 @@ set fish_greeting
 set VIRTUAL_ENV_DISABLE_PROMPT "1"
 set -x MANPAGER "sh -c 'col -bx | bat --theme \"Sublime Snazzy\" -l man -p'"
 set -x BAT_THEME "Dracula"
-set -x EDITOR /usr/bin/micro
+set -x EDITOR "code"
 
 set -U __done_min_cmd_duration 10000
 set -U __done_notification_urgency_level low
@@ -103,5 +103,5 @@ alias ......='cd ../../../../..'
 if status is-interactive
     starship init fish | source
     test "/mnt/c/Users/alexa" = (pwd) && cd ~ && clear && invoke_fetch
-    bash ~/.config/fish/scripts/check_last_update.bash
+    check-last-apt-update
 end
